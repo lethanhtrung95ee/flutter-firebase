@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "680973787103",
+    "project_id": "fir-interview-19325",
+    "storage_bucket": "fir-interview-19325.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:680973787103:android:d059922709382c8fbcee6a",
+        "android_client_info": {
+          "package_name": "com.flutter.interview.flutter_interview"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9fKVJzAK6CqwUnNBxAcDVzciI0rKOp2s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
