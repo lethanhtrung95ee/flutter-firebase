@@ -33,130 +33,131 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       body: SafeArea(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Icon(Icons.android, size: 100),
-          const SizedBox(height: kdouble80),
-
-          Text('Interview Apps',
-              style: GoogleFonts.bebasNeue(fontSize: kdouble50)),
-          const SizedBox(height: kdouble10),
-
-          const Text('You\'ve been missed.',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-              )),
-          const SizedBox(height: kdouble60),
-
-          //Text Field: Email.
-          Padding(
-              padding: const EdgeInsets.symmetric(horizontal: kdouble20),
-              child: TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(kdouble15),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.deepPurple),
-                      borderRadius: BorderRadius.circular(kdouble15),
-                    ),
-                    hintText: 'Email',
-                    fillColor: Colors.grey[200],
-                    filled: true),
-              )),
-          const SizedBox(height: kdouble10),
-
-          //Text Field: password.
-          Padding(
-              padding: const EdgeInsets.symmetric(horizontal: kdouble20),
-              child: TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(kdouble15),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.deepPurple),
-                      borderRadius: BorderRadius.circular(kdouble15),
-                    ),
-                    hintText: 'Password',
-                    fillColor: Colors.grey[200],
-                    filled: true),
-              )),
-          const SizedBox(height: kdouble10),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: kdouble30),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return const ForgotPasswordPage();
-                        },
+        child: SingleChildScrollView(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Icon(Icons.android, size: 100),
+            const SizedBox(height: kdouble80),
+          
+            Text('Interview Apps',
+                style: GoogleFonts.bebasNeue(fontSize: kdouble50)),
+            const SizedBox(height: kdouble10),
+          
+            const Text('You\'ve been missed.',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                )),
+            const SizedBox(height: kdouble60),
+          
+            //Text Field: Email.
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: kdouble20),
+                child: TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(kdouble15),
                       ),
-                    );
-                  },
-                  child: const Text(
-                    'Forgot password?',
-                    style: TextStyle(
-                        color: Colors.blue, fontWeight: FontWeight.bold),
-                  ),
-                )
-              ],
-            ),
-          ),
-
-          //login button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: kdouble20),
-            child: GestureDetector(
-              onTap: signIn,
-              child: Container(
-                padding: const EdgeInsets.all(kdouble15),
-                decoration: BoxDecoration(
-                  color: Colors.deepPurple,
-                  borderRadius: BorderRadius.circular(kdouble15),
-                ),
-                child: const Center(
-                  child: Text('Sign in',
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.deepPurple),
+                        borderRadius: BorderRadius.circular(kdouble15),
+                      ),
+                      hintText: 'Email',
+                      fillColor: Colors.grey[200],
+                      filled: true),
+                )),
+            const SizedBox(height: kdouble10),
+          
+            //Text Field: password.
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: kdouble20),
+                child: TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(kdouble15),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.deepPurple),
+                        borderRadius: BorderRadius.circular(kdouble15),
+                      ),
+                      hintText: 'Password',
+                      fillColor: Colors.grey[200],
+                      filled: true),
+                )),
+            const SizedBox(height: kdouble10),
+          
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kdouble30),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return const ForgotPasswordPage();
+                          },
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Forgot password?',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      )),
+                          color: Colors.blue, fontWeight: FontWeight.bold),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          
+            //login button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kdouble20),
+              child: GestureDetector(
+                onTap: signIn,
+                child: Container(
+                  padding: const EdgeInsets.all(kdouble15),
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple,
+                    borderRadius: BorderRadius.circular(kdouble15),
+                  ),
+                  child: const Center(
+                    child: Text('Sign in',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        )),
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: kdouble30),
-
-          //not a member, register
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            const Text(
-              'Not a member? ',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            GestureDetector(
-              onTap: widget.showRegisterPage,
-              child: const Text(
-                'Register now',
-                style:
-                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+            const SizedBox(height: kdouble30),
+          
+            //not a member, register
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Text(
+                'Not a member? ',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            )
-          ])
-        ]),
+              GestureDetector(
+                onTap: widget.showRegisterPage,
+                child: const Text(
+                  'Register now',
+                  style:
+                      TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+                ),
+              )
+            ])
+          ]),
+        ),
       ),
     );
   }

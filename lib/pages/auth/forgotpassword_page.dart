@@ -23,8 +23,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       await FirebaseAuth.instance.sendPasswordResetEmail(
         email: _emailController.text.trim(),
       );
-      _showErrorDialog(
-          'Password reset link has sent. Please check your email!');
+      _showDialog('Password reset link has sent. Please check your email!');
     } on FirebaseAuthException catch (e) {
       _showErrorDialog(e.message ?? 'An error occurred.');
     }
@@ -36,6 +35,26 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Error'),
+          content: Text(errorMessage),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Info'),
           content: Text(errorMessage),
           actions: <Widget>[
             TextButton(

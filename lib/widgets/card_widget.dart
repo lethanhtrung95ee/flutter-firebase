@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_interview/classes/item_class.dart';
+import 'package:flutter_interview/classes/product_class.dart';
 import 'package:flutter_interview/core/const.dart';
 import 'package:flutter_interview/pages/description_page.dart';
 
 class CardWidget extends StatelessWidget {
   const CardWidget({
     super.key,
-    required this.box,
+    required this.data,
   });
-  final ItemClass box;
+  final ProductClass data;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class CardWidget extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return DescriptionPage(box: box);
+              return DescriptionPage(data: data);
             },
           ),
         );
@@ -29,18 +29,17 @@ class CardWidget extends StatelessWidget {
         width: double.infinity,
         child: Column(children: [
           const SizedBox(height: kdouble5),
-          Image.asset('$pathImageFolder${box.image}'),
+          Image.network(
+            data.images[0],
+           width: MediaQuery.of(context).size.width,
+            height: 200,
+            fit: BoxFit.cover,
+          ),
           Text(
-            box.title,
+            data.name,
             style: const TextStyle(
               fontSize: kdouble20,
               fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            box.description,
-            style: const TextStyle(
-              fontSize: kdouble10,
             ),
           ),
         ]),

@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:oktoast/oktoast.dart';
+
 import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,11 +28,9 @@ class _RegisterPageState extends State<RegisterPage> {
   DateTime? _selectedDate;
 
   //Image controller
-  List<Widget> itemPhotosWidgetList = <Widget>[];
+  Widget? itemPhotosWidget;
   final ImagePicker _picker = ImagePicker();
-  File? file;
-  List<XFile>? photo = <XFile>[];
-  List<XFile> itemImagesList = <XFile>[];
+  XFile? photo;
   bool uploading = false;
 
   @override
@@ -44,8 +41,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _firstNameController.dispose();
     _lastNameController.dispose();
     _dobController.dispose();
-    itemPhotosWidgetList.clear();
-    itemImagesList.clear();
     super.dispose();
   }
 
@@ -77,14 +72,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 password: _passwordController.text.trim());
         User? user = userCredential.user;
         if (user != null) {
-          List<String> downloadUrls =
-              await upload(_emailController.text.trim());
+          String downloadUrl =
+              await uplaodImageAndSaveItemInfo(_emailController.text.trim());
           await addUserDetail(
               _emailController.text.trim(),
               _firstNameController.text.trim(),
               _lastNameController.text.trim(),
               _selectedDate!,
-              downloadUrls);
+              downloadUrl);
         }
       } on FirebaseAuthException catch (e) {
         _showErrorDialog(e.message ?? 'An error occurred.');
@@ -116,98 +111,67 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future addUserDetail(String email, String firstName, String lastName,
-      DateTime dob, List<String> downloadUrls) async {
+      DateTime dob, String downloadUrl) async {
     await FirebaseFirestore.instance.collection('users').doc(email).set({
-      'first-name': firstName,
-      'last-name': lastName,
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
       'dob': dob,
-      'privateImageUrl': downloadUrls,
+      'privateImageUrl': downloadUrl,
     });
   }
 
-  void addImage() {
-    itemPhotosWidgetList.clear();
-    for (int i = 0; i < itemImagesList.length; i++) {
-      itemPhotosWidgetList.add(buildImageWithDeleteButton(i));
+  void pickPhotoFromGallery() async {
+    final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        photo = pickedImage;
+        itemPhotosWidget = Image.file(
+          File(photo!.path),
+          height: 150,
+          width: 150,
+          fit: BoxFit.cover,
+        );
+      });
     }
   }
 
-  Widget buildImageWithDeleteButton(int index) {
-    return Padding(
-      padding: const EdgeInsets.all(1.0),
-      child: SizedBox(
-        height: 90.0,
-        child: Stack(
-          children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Container(
-                child: kIsWeb
-                    ? Image.network(File(itemImagesList[index].path).path)
-                    : Image.file(File(itemImagesList[index].path)),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    itemImagesList.removeAt(index);
-                    addImage();
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 20,
+  Widget _buildProfilePicture() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.0),
+      child: Container(
+        color: Colors.transparent,
+        child: Center(
+          child: itemPhotosWidget != null
+              ? Image.file(
+                  File(photo!.path),
+                  height: 150,
+                  width: 150,
+                  fit: BoxFit.cover,
+                )
+              : GestureDetector(
+                  onTap: pickPhotoFromGallery,
+                  child: Container(
+                    color: Colors.transparent,
+                    alignment: Alignment.center,
+                    child: ClipOval(
+                      child: Image.network(
+                        "https://static.thenounproject.com/png/3322766-200.png",
+                        height: 100.0,
+                        width: 100.0,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ],
         ),
       ),
     );
   }
 
-  pickPhotoFromGallery() async {
-    photo = await _picker.pickMultiImage();
-    if (photo != null) {
-      setState(() {
-        itemImagesList = itemImagesList + photo!;
-        addImage();
-        photo!.clear();
-      });
-    }
-  }
-
-  Future<List<String>> upload(String email) async {
-    List<String> downloadUrl = await uplaodImageAndSaveItemInfo(email);
-    // setState(() {
-    //   uploading = false;
-    // });
-    showToast("Image Uploaded Successfully");
-    return downloadUrl;
-  }
-
-  Future<List<String>> uplaodImageAndSaveItemInfo(String email) async {
-    List<Future<String>> uploadTasks = [];
-    for (int i = 0; i < itemImagesList.length; i++) {
-      final file = File(itemImagesList[i].path);
-      final pickedFile = PickedFile(file.path);
-      uploadTasks.add(uploadImageToStorage(pickedFile, email));
-    }
-
-    // Wait for all uploads to complete before getting URLs
-    List<String> downloadUrls = await Future.wait(uploadTasks);
-    return downloadUrls;
+  Future<String> uplaodImageAndSaveItemInfo(String email) async {
+    final file = File(photo!.path);
+    final pickedFile = PickedFile(file.path);
+    return uploadImageToStorage(pickedFile, email);
   }
 
   Future<String> uploadImageToStorage(
@@ -227,7 +191,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: const Color.fromARGB(255, 200, 185, 185),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -244,94 +208,24 @@ class _RegisterPageState extends State<RegisterPage> {
             Column(
               children: [
                 Container(
-                  width: 300,
-                  height: 300,
+                  width: 150,
+                  height: 150,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                      color: Colors.blue[50],
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.shade200,
-                          offset: const Offset(0.0, 0.5),
-                          blurRadius: 30.0,
-                        )
-                      ]),
-                  child: Center(
-                    child: itemPhotosWidgetList.isEmpty
-                        ? Center(
-                            // onPressed: pickPhotoFromGallery,
-                            child: Container(
-                              alignment: Alignment.bottomCenter,
-                              child: Center(
-                                child: Image.network(
-                                  "https://static.thenounproject.com/png/3322766-200.png",
-                                  height: 100.0,
-                                  width: 100.0,
-                                ),
-                              ),
-                            ),
-                          )
-                        : SizedBox(
-                            height: 400,
-                            width: 400,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: Wrap(
-                                spacing: 5.0,
-                                direction: Axis.horizontal,
-                                alignment: WrapAlignment.spaceEvenly,
-                                runSpacing: 10.0,
-                                children: itemPhotosWidgetList,
-                              ),
-                            ),
-                          ),
+                    borderRadius: BorderRadius.circular(12.0),
+                    color: Colors.blue[50],
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade200,
+                        offset: const Offset(0.0, 0.5),
+                        blurRadius: 30.0,
+                      )
+                    ],
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 50.0,
-                        left: 100.0,
-                        right: 100.0,
-                      ),
-                      child: TextButton(
-                        style: ButtonStyle(
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          padding:
-                              MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 15.0),
-                          ),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color.fromRGBO(0, 35, 102, 1),
-                          ),
-                        ),
-                        onPressed:
-                            uploading ? null : () => pickPhotoFromGallery(),
-                        child: uploading
-                            ? const SizedBox(
-                                height: 15.0,
-                                child: CircularProgressIndicator(),
-                              )
-                            : const Text(
-                                "Add",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                      ),
-                    ),
-                  ],
-                ),
+                  child: GestureDetector(
+                    onTap: pickPhotoFromGallery,
+                    child: _buildProfilePicture(),
+                  ),
+                )
               ],
             ),
             const SizedBox(height: kdouble10),
@@ -500,7 +394,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.blue, fontWeight: FontWeight.bold),
                 ),
               )
-            ])
+            ]),
+            const SizedBox(height: kdouble30),
           ]),
         ),
       ),

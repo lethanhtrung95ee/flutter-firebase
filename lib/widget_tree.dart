@@ -35,14 +35,19 @@ class _WidgetTreeState extends State<WidgetTree> {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return NavigationBar(
-              destinations: const [
-                NavigationDestination(icon: Icon(Icons.home), label: "Home"),
-                NavigationDestination(
-                    icon: Icon(Icons.person), label: "Profile"),
+            return BottomNavigationBar(
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
+                ),
               ],
-              selectedIndex: currentPage,
-              onDestinationSelected: (int value) {
+              currentIndex: currentPage,
+              onTap: (int value) {
                 setState(() {
                   currentPage = value;
                 });

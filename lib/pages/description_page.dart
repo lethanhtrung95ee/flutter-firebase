@@ -1,109 +1,100 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_interview/classes/item_class.dart';
-import 'package:flutter_interview/core/const.dart';
+import 'package:flutter_interview/classes/product_class.dart';
 
 class DescriptionPage extends StatefulWidget {
   const DescriptionPage({
     super.key,
-    required this.box,
+    required this.data,
   });
-  final ItemClass box;
+  final ProductClass data;
 
   @override
   State<DescriptionPage> createState() => _DescriptionPageState();
 }
 
 class _DescriptionPageState extends State<DescriptionPage> {
-  double fontSizeCustom = 10;
+  String _selectedImageUrl = '';
+
   @override
   Widget build(BuildContext context) {
+    final product = widget.data;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.box.title),
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back_ios)),
-        actions: [
-          IconButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Clicked info icon'),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              },
-              icon: const Icon(Icons.info)),
-        ],
+        title: const Text('Product Details'),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(kdouble10),
-          child: Column(children: [
-            Image.asset('$pathImageFolder${widget.box.image}'),
-            Wrap(
-              spacing: kdouble10,
-              children: [
-                TextButton(
-                    onPressed: () {
-                      setState(() {
-                        fontSizeCustom = 20;
-                      });
-                    },
-                    child: const Text('Small')),
-                OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        fontSizeCustom = 40;
-                      });
-                    },
-                    child: const Text('Medium')),
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        fontSizeCustom = 100;
-                      });
-                    },
-                    child: const Text('Large')),
-                FilledButton(
-                    onPressed: () {
-                      setState(() {
-                        fontSizeCustom = 200;
-                      });
-                    },
-                    child: const Text('Huge')),
-              ],
-            ),
-            FittedBox(
-              child: Text(widget.box.title,
-                  style: TextStyle(
-                    fontSize: fontSizeCustom,
-                    fontWeight: FontWeight.bold,
-                  )),
-            ),
-            const SizedBox(height: kdouble10),
-            const FittedBox(
-              child: Text(
-                DummyDescription,
-                style: TextStyle(
-                  fontSize: kdouble10,
-                ),
-                textAlign: TextAlign.justify,
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Display the big image
+            GestureDetector(
+              onTap: () {
+                // Handle tap on big image
+              },
+              child: Image.network(
+                _selectedImageUrl.isNotEmpty
+                    ? _selectedImageUrl
+                    : product.images.isNotEmpty
+                        ? product.images[0]
+                        : '', // Display first image or a placeholder
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: kdouble10),
-            const FittedBox(
-              child: Text(
-                DummyDescription,
-                style: TextStyle(
-                  fontSize: kdouble10,
-                ),
-                textAlign: TextAlign.justify,
+            const SizedBox(height: 20),
+            // Display the small images
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: product.images.map((url) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedImageUrl = url;
+                        });
+                      },
+                      child: Image.network(
+                        url,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
-          ]),
+            const SizedBox(height: 20),
+            // Display product details
+            Text(
+              product.name,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Category: ${product.category}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Owner: ${product.createdBy}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            ),
+            Text(
+              '\$${product.price}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              product.description,
+              style: const TextStyle(fontSize: 20),
+            ),
+            const SizedBox(height: 10),
+          ],
         ),
       ),
     );
