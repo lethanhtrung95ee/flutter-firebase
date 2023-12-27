@@ -1,16 +1,9 @@
 # flutter_interview
 
-A new Flutter project.
+A ecommerce Flutter project
 
-## Getting Started
+## Detail
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+These project has 3 pages: Login, Main and Profile.
+Using Firebase as the back-end to handle the authentication and authorization. 
+Using Riverpod as state management to listen changing the state and fetch the state.
